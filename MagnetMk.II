@@ -1,0 +1,48 @@
+#include <Wire.h>
+#include "SparkFun_VL53L1X.h"  // Подключение библиотек для дальномера
+#define SHUTDOWN_PIN 2
+#define INTERRUPT_PIN 3
+SFEVL53L1X distanceSensor;
+void setup(void)
+{
+  Wire.begin();
+ 
+  Serial.begin(115200);
+  Serial.println("VL53L1X Qwiic Test");
+ 
+  if (distanceSensor.begin() != 0)
+  {
+    Serial.println("Sensor failed to begin. Please check wiring. Freezing...");
+    while (1)
+      ;
+  }
+  Serial.println("Sensor online!");
+  pinMode(10, OUTPUT); 
+  pinMode(11, OUTPUT);
+  pinMode(2, INPUT);
+}
+ 
+void loop(void)
+{
+  distanceSensor.startRanging(); //Запуск Дальномера в режиме измерения расстояния
+  while (!distanceSensor.checkForDataReady())
+  {
+    delay(1);
+  }
+  int distance = distanceSensor.getDistance(); // Получение измеренного расстояния
+  distanceSensor.clearInterrupt();             // Очистка данных дальномера из памяти
+  distanceSensor.stopRanging();                // Выключение дальномера 
+  Serial.print("Distance(mm): ");
+  Serial.print(distance);                      // Вывод расстояния в консоль
+  Serial.println();
+  Serial.println(pulseIn(2, HIGH));            // Вывод в консоль сигнала тумблера  
+  Serial.println();
+  if(pulseIn(2, HIGH)<1500 && distance<300){ // Если высота меньше 30см и тумблер не нажат, то выключить магниты
+    digitalWrite(10, LOW);
+    digitalWrite(11, LOW);
+  }
+  else{
+    digitalWrite(10, HIGH);
+    digitalWrite(11, HIGH);
+  }
+ }
