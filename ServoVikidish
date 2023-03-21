@@ -1,0 +1,25 @@
+#include <PPM.h>
+#include <Servo.h>
+#define SERVO_PIN 9
+#define CHANNELS 8
+#define PPM_PIN 2
+#define LED 13
+Servo servo;
+void setup() {
+  ppm.begin(PPM_PIN, CHANNELS);
+  servo.attach(SERVO_PIN);
+  pinMode(LED, OUTPUT);
+  Serial.begin(115200);
+}
+void loop() {
+  Serial.print(ppm.get(5)); 
+  analogWrite(LED, ppm.getPWM(5));             
+  if (ppm.get(5) < 1500)
+   {
+   servo.write(140);
+   }
+   
+  else{
+   servo.write(92);
+  }
+}
