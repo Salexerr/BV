@@ -4,7 +4,7 @@ void setup() {
 }
 void loop() {
   if(pulseIn(13,HIGH)>1000){
-    delay(1000);
+    delay(1000);               //Держим тумблер 1 секунду
     if(pulseIn(13,HIGH)>1000){
       digitalWrite(2 , HIGH);
       delay(500);
